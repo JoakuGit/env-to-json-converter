@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>.env a JSON</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-2: #1f2937;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --border: #334155;
+        --error: #fca5a5;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: radial-gradient(circle at top, #1e293b, var(--bg));
+        color: var(--text);
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(1100px, 100%);
+        background: rgba(17, 24, 39, 0.88);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 20px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 24px 24px 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 40px);
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--border);
+      }
+
+      .pane {
+        background: rgba(15, 23, 42, 0.85);
+        padding: 18px;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .toolbar strong {
+        font-size: 14px;
+        letter-spacing: 0.02em;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 1px solid var(--border);
+        background: var(--panel-2);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      button:hover { border-color: var(--accent); }
+
+      textarea {
+        width: 100%;
+        min-height: 430px;
+        resize: vertical;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #020617;
+        color: var(--text);
+        padding: 16px;
+        font: 14px/1.5 Consolas, Monaco, Menlo, monospace;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      }
+
+      pre {
+        margin: 0;
+        min-height: 430px;
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #020617;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font: 14px/1.5 Consolas, Monaco, Menlo, monospace;
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .error { color: var(--error); }
+
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+        textarea, pre { min-height: 280px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useMemo, useState } = React;
+
+      const sample = `# Example .env\nAPI_URL=https://api.example.com\nPORT=3000\nDEBUG=true\nNAME="My App"`;
+
+      function parseEnv(text) {
+        const result = {};
+        const warnings = [];
+
+        text.split(/\r?\n/).forEach((rawLine, index) => {
+          const line = rawLine.trim();
+          if (!line || line.startsWith('#')) return;
+
+          const cleaned = line.startsWith('export ') ? line.slice(7).trim() : line;
+          const equalIndex = cleaned.indexOf('=');
+
+          if (equalIndex === -1) {
+            warnings.push(`Linea ${index + 1}: sin '='`);
+            return;
+          }
+
+          const key = cleaned.slice(0, equalIndex).trim();
+          let value = cleaned.slice(equalIndex + 1).trim();
+
+          if (!key) {
+            warnings.push(`Linea ${index + 1}: clave vacia`);
+            return;
+          }
+
+          if (
+            (value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))
+          ) {
+            value = value.slice(1, -1);
+          }
+
+          value = value
+            .replace(/\\n/g, '\n')
+            .replace(/\\r/g, '\r')
+            .replace(/\\t/g, '\t');
+
+          if (value === 'true') value = true;
+          else if (value === 'false') value = false;
+          else if (value !== '' && !Number.isNaN(Number(value)) && /^-?\d+(\.\d+)?$/.test(value)) {
+            value = Number(value);
+          }
+
+          result[key] = value;
+        });
+
+        return { result, warnings };
+      }
+
+      function App() {
+        const [envText, setEnvText] = useState(sample);
+        const [copied, setCopied] = useState(false);
+
+        const { result, warnings } = useMemo(() => parseEnv(envText), [envText]);
+        const output = JSON.stringify(result, null, 2);
+
+        const copyOutput = async () => {
+          await navigator.clipboard.writeText(output);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1200);
+        };
+
+        return (
+          <div className="app">
+            <div className="card">
+              <div className="header">
+                <h1>.env a JSON</h1>
+                <p>Pega tu archivo `.env` y obtén un JSON listo para usar.</p>
+              </div>
+
+              <div className="grid">
+                <div className="pane">
+                  <div className="toolbar">
+                    <strong>Entrada</strong>
+                    <div className="actions">
+                      <button onClick={() => setEnvText(sample)}>Cargar ejemplo</button>
+                      <button onClick={() => setEnvText('')}>Limpiar</button>
+                    </div>
+                  </div>
+                  <textarea
+                    value={envText}
+                    onChange={(e) => setEnvText(e.target.value)}
+                    spellCheck="false"
+                    aria-label="Texto .env"
+                  />
+                </div>
+
+                <div className="pane">
+                  <div className="toolbar">
+                    <strong>Salida JSON</strong>
+                    <div className="actions">
+                      <button onClick={copyOutput}>Copiar JSON</button>
+                    </div>
+                  </div>
+                  <pre>{output}</pre>
+                  <div className="meta">
+                    <span>{warnings.length ? `${warnings.length} aviso(s)` : 'Sin avisos'}</span>
+                    <span>{copied ? 'Copiado' : ' '}</span>
+                  </div>
+                  {warnings.length > 0 && (
+                    <p className="error" style={{ marginTop: 10 }}>
+                      {warnings.join(' | ')}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
