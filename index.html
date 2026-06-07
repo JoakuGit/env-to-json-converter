@@ -1,12 +1,35 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>.env a JSON</title>
+    <meta name="description" content="Convert .env files to JSON instantly in your browser. Paste environment variables, preview structured output, and copy JSON with one click." />
+    <meta name="keywords" content="env to json, dotenv converter, .env to json, environment variables, github pages, react tool" />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ENV to JSON Converter" />
+    <meta property="og:description" content="Convert .env files to JSON instantly in your browser." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://YOUR-USERNAME.github.io/YOUR-REPO/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ENV to JSON Converter" />
+    <meta name="twitter:description" content="Paste your .env file and get clean JSON output instantly." />
+    <title>ENV to JSON Converter | .env to JSON Online</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ENV to JSON Converter",
+        "description": "Convert .env files to JSON instantly in your browser.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "url": "https://YOUR-USERNAME.github.io/YOUR-REPO/"
+      }
+    </script>
     <style>
       :root {
         color-scheme: dark;
@@ -58,6 +81,16 @@
         margin: 0;
         color: var(--muted);
         line-height: 1.5;
+      }
+
+      .intro {
+        display: grid;
+        gap: 10px;
+        padding: 0 24px 22px;
+      }
+
+      .intro p {
+        max-width: 72ch;
       }
 
       .grid {
@@ -172,7 +205,7 @@
           const equalIndex = cleaned.indexOf('=');
 
           if (equalIndex === -1) {
-            warnings.push(`Linea ${index + 1}: sin '='`);
+            warnings.push(`Line ${index + 1}: missing '='`);
             return;
           }
 
@@ -180,7 +213,7 @@
           let value = cleaned.slice(equalIndex + 1).trim();
 
           if (!key) {
-            warnings.push(`Linea ${index + 1}: clave vacia`);
+            warnings.push(`Line ${index + 1}: empty key`);
             return;
           }
 
@@ -225,38 +258,45 @@
           <div className="app">
             <div className="card">
               <div className="header">
-                <h1>.env a JSON</h1>
-                <p>Pega tu archivo `.env` y obtén un JSON listo para usar.</p>
+                <h1>ENV to JSON</h1>
+                <p>Paste your `.env` file and get JSON output instantly.</p>
+              </div>
+
+              <div className="intro">
+                <p>
+                  A lightweight browser-based dotenv converter for GitHub Pages.
+                  No backend, no install, just paste your environment variables and copy the JSON.
+                </p>
               </div>
 
               <div className="grid">
                 <div className="pane">
                   <div className="toolbar">
-                    <strong>Entrada</strong>
+                    <strong>Input</strong>
                     <div className="actions">
-                      <button onClick={() => setEnvText(sample)}>Cargar ejemplo</button>
-                      <button onClick={() => setEnvText('')}>Limpiar</button>
+                      <button onClick={() => setEnvText(sample)}>Load example</button>
+                      <button onClick={() => setEnvText('')}>Clear</button>
                     </div>
                   </div>
                   <textarea
                     value={envText}
                     onChange={(e) => setEnvText(e.target.value)}
                     spellCheck="false"
-                    aria-label="Texto .env"
+                    aria-label=".env input"
                   />
                 </div>
 
                 <div className="pane">
                   <div className="toolbar">
-                    <strong>Salida JSON</strong>
+                    <strong>JSON Output</strong>
                     <div className="actions">
-                      <button onClick={copyOutput}>Copiar JSON</button>
+                      <button onClick={copyOutput}>Copy JSON</button>
                     </div>
                   </div>
                   <pre>{output}</pre>
                   <div className="meta">
-                    <span>{warnings.length ? `${warnings.length} aviso(s)` : 'Sin avisos'}</span>
-                    <span>{copied ? 'Copiado' : ' '}</span>
+                    <span>{warnings.length ? `${warnings.length} warning(s)` : 'No warnings'}</span>
+                    <span>{copied ? 'Copied' : ' '}</span>
                   </div>
                   {warnings.length > 0 && (
                     <p className="error" style={{ marginTop: 10 }}>
