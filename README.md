@@ -1,20 +1,22 @@
-# ENV to JSON Converter
+# ENV ↔ JSON Converter
 
-A lightweight React app that converts `.env` files into JSON directly in the browser.
+A lightweight React app that converts `.env` files into JSON—and JSON back into ENV—directly in the browser.
 
 ## Features
 
 - Paste `.env` content and get live JSON output
+- Convert a JSON object into copy-ready ENV entries
 - Supports `export` lines
 - Parses strings, numbers, and booleans
-- Copy JSON with one click
+- Copy JSON or ENV with one click
 - Mobile-friendly layout
 
 ## How to use
 
 1. Open `index.html` in a browser.
-2. Paste your `.env` file into the input panel.
-3. Copy the generated JSON from the output panel.
+2. Choose the `ENV → JSON` or `JSON → ENV` direction.
+3. Paste your content into the input panel.
+4. Copy the generated output from the output panel.
 
 ## GitHub Pages
 

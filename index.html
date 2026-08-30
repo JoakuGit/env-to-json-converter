@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Convert .env files to JSON instantly in your browser. Paste environment variables, preview structured output, and copy JSON with one click." />
-    <meta name="keywords" content="env to json, dotenv converter, .env to json, environment variables, github pages, react tool" />
+    <meta name="description" content="Convert .env files to JSON or JSON to ENV instantly in your browser." />
+    <meta name="keywords" content="env to json, json to env, dotenv converter, .env to json, environment variables, github pages, react tool" />
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#0f172a" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ENV to JSON Converter" />
-    <meta property="og:description" content="Convert .env files to JSON instantly in your browser." />
+    <meta property="og:title" content="ENV ↔ JSON Converter" />
+    <meta property="og:description" content="Convert .env files to JSON or JSON to ENV instantly in your browser." />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://joakugit.github.io/env-to-json-converter/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ENV to JSON Converter" />
-    <meta name="twitter:description" content="Paste your .env file and get clean JSON output instantly." />
-    <title>ENV to JSON Converter | .env to JSON Online</title>
+    <meta name="twitter:title" content="ENV ↔ JSON Converter" />
+    <meta name="twitter:description" content="Convert between .env and JSON in either direction." />
+    <title>ENV ↔ JSON Converter | Convert in Both Directions</title>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "ENV to JSON Converter",
-        "description": "Convert .env files to JSON instantly in your browser.",
+        "name": "ENV ↔ JSON Converter",
+        "description": "Convert .env files to JSON or JSON to ENV instantly in your browser.",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
         "url": "https://joakugit.github.io/env-to-json-converter/"
@@ -133,6 +133,19 @@
       }
 
       button:hover { border-color: var(--accent); }
+      button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+      .mode-switch {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .mode-switch .active {
+        border-color: var(--accent);
+        background: rgba(56, 189, 248, 0.16);
+        color: #bae6fd;
+      }
 
       textarea {
         width: 100%;
